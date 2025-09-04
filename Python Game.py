@@ -15,6 +15,9 @@ starving = False
 farmLevel = 0
 shelterLevel = 0
 ShelterHealth = shelterLevel * 10
+exploreDone = False
+farmDone = False
+shelterDone = False
 
 #Creating a typing effect when printing
 def typeText(text, speed=0.05, variance=0.02):
@@ -106,6 +109,8 @@ skipStory = input("Would you like to skip the story yes or no: ")
 if skipStory == "no":
     typeText(f"I was on the cruise ship, coming home from vacation. Everything felt perfect as we sailed across the calm ocean. Then, late at night, the ship shook violently. A loud CRASH echoed through the halls. Rushing to jump of the ship I looked back, the cruise ship had almost sunk completely. Everyone else… was gone. After hours drifting, I finally washed up on a small, deserted island. I’m alone, surrounded by trees and the sound of the ocean. I have no idea how long I’ll survive here…", 0.05, 0.02)
     input("Type next to start: ")
+else:
+    typeText(f"Skipping story", 0.05, 0.02)
 day = day + 1
 
     
@@ -122,17 +127,83 @@ while alive:
     typeText(f"Your shelter health is at {ShelterHealth}", 0.05, 0.02)
     
     if day == 1:
+        healthCheck()
+        hungerCheck()
         typeText("To survive on the island I should explore, start a farm, and build shelter.", 0.05, 0.02)
-        action = input("What should I do today? (explore/farm/shelter): ").lower()
+        action = input("What should I do? (explore/farm/shelter): ").lower()
         
         if action == "explore":
             typeText("You find a cave...... but something seems off, your hear a voice, Your are not ready yet. You decide to head home", 0.05, 0.02)
+            exploreDone = True
         elif action == "farm":
             typeText("You start a small farm.", 0.05, 0.02)
+            farmDone = True
             farmLevel = farmLevel + 1
         elif action == "shelter":
             typeText("You build a simple shelter to stay safe from the weather.", 0.05, 0.02)
             shelterLevel = shelterLevel + 1
-    typeText(f"I'll finish the other two later, time to sleep", 0.05, 0.02)
+            shelterDone = True
+        
+        if exploreDone == True:
+            typeText("Now I just need to start a farm, and build shelter.", 0.05, 0.02)
+            action = input("What should I do next? (farm/shelter): ").lower()
+            if action == "farm":
+                typeText("You start a small farm.", 0.05, 0.02)
+                farmDone = True
+                farmLevel = farmLevel + 1
+            elif action == "shelter":
+                typeText("You build a simple shelter to stay safe from the weather.", 0.05, 0.02)
+                shelterLevel = shelterLevel + 1
+                shelterDone = True
+        elif farmDone == True:
+            typeText("Now I just need to explore, and build shelter.", 0.05, 0.02)
+            action = input("What should I do next? (explore/shelter): ").lower()
+            if action == "explore":
+                typeText("You find a cave...... but something seems off, your hear a voice, Your are not ready yet. You decide to head home", 0.05, 0.02)
+                exploreDone = True
+            elif action == "shelter":
+                typeText("You build a simple shelter to stay safe from the weather.", 0.05, 0.02)
+                shelterLevel = shelterLevel + 1
+                shelterDone = True
+        elif shelterDone == True:
+            typeText("Now I just need to explore, and build a farm.", 0.05, 0.02)
+            action = input("What should I do next? (explore/farm): ").lower()
+            if action == "explore":
+                typeText("You find a cave...... but something seems off, your hear a voice, Your are not ready yet. You decide to head home", 0.05, 0.02)
+                exploreDone = True
+            elif action == "farm":
+                typeText("You start a small farm.", 0.05, 0.02)
+                farmLevel = farmLevel + 1
+                farmDone = True
+        if exploreDone == True and farmDone == True:
+            typeText("Now I just need to build shelter.", 0.05, 0.02)
+            typeText("You build a simple shelter to stay safe from the weather.", 0.05, 0.02)
+            shelterLevel = shelterLevel + 1
+            shelterDone == True
+        elif farmDone == True and shelterDone == True:
+            typeText("Now I just need to explore.", 0.05, 0.02)
+            typeText("You find a cave...... but something seems off, your hear a voice, Your are not ready yet. You decide to head home", 0.05, 0.02)
+            exploreDone = True
+        elif shelterDone == True and exploreDone:
+            typeText("Now I just need to build a farm.", 0.05, 0.02)
+            typeText("You start a small farm.", 0.05, 0.02)
+            farmLevel = farmLevel + 1
+            farmDone = True
+        typeText("Made greate progress today, time to head to bed!", 0.05, 0.02)   
     sleeping()
+    wakeUp = input("Time to wake up? yes/no: ")
+    if wakeUp == "yes":
+        typeText(f"Day {day}", 0.05, 0.02)
+        typeText(f"Your health is at {health}", 0.05, 0.02)
+        typeText(f"Your hunger is at {hunger}", 0.05, 0.02)
+        typeText(f"Your food storage is at {foodStock}", 0.05, 0.02)
+        typeText(f"Your shelter health is at {ShelterHealth}", 0.05, 0.02)
+    else:
+        typeText("Too Bad!", 0.05, 0.02)   
+    
+    
+    if day == 2:
+        healthCheck()
+        hungerCheck()
+        typeText(f"Welcome to day 2!", 0.05, 0.02)
     break
