@@ -14,11 +14,13 @@ sleep = "no"
 starving = False
 farmLevel = 0
 shelterLevel = 0
-shelterHealth = shelterLevel * 10
+shelterHealth = 0
 exploreDone = False
 farmDone = False
 shelterDone = False
 shelterDestroyed = False
+shelterUpgrade = False
+farmUpgrade = False
 #Creating a typing effect when printing
 def typeText(text, speed=0.05, variance=0.02):
     for char in text:
@@ -62,7 +64,25 @@ def farmingAction():
     if farming == "yes":
         foodStock += farmLevel
         print("You farmed and gained", farmLevel, "food. Total food:", foodStock)
+def upgradeShelter():
+    global shelterLevel, shelterHealth, shelterUpgrade
+    if shelterUpgrade:
+        shelterLevel += 1
+        shelterHealth = shelterLevel * 10
+        shelterUpgrade = False
 
+def upgradeFarm():
+    global farmLevel, farmUpgrade
+    if farmUpgrade:
+        farmLevel += 1
+        farmUpgrade = False
+
+def eat():
+    if health < 100 and hunger <  5:
+       eating = input("Would you like to eat to restore hunger? yes/no: ")
+       if eating == yes:
+        foodStock -= 1
+        hunger += 1
 #defining sleeping to restore energy and health if hunger is a a certain point
 def sleeping():
     global day, health, hunger
@@ -76,21 +96,18 @@ def sleeping():
             health += 4
         elif 5 <= hunger <= 6:
             health += 3
-        elif 3 <= hunger <= 4:
-            health += 2
-        else:
-            health += 1
-    else:
-        health += 1
+
     healthCheck()
     hungerCheck()
+    upgradeFarm()
+    upgradeShelter()
     typeText(f"Your health is {health}", 0.05, 0.02)
     typeText(f"Your hunger is {hunger}", 0.05, 0.02)
     typeText(f"Your food storage is {foodStock}", 0.05, 0.02)
-
+    typeText(f"shelter health is at {shelterHealth}", 0.05, 0.02)
 #creating the statment starving if hunger is below a certain point start to lose health
 def starving():
-    if hunger <= 5:
+    if hunger < 5:
         health = health - 5
 
 def RandomEvents():
@@ -120,6 +137,7 @@ def RandomEvents():
         typeText(f"Nothing interesting has happend", 0.05, 0.02)
     shelterHealthCheck()
     foodStorageCheck()
+    
 name = input("What is your name?: ")
 typeText(f"Welcome {name}", 0.05, 0.02)
 time.sleep(1)
@@ -160,8 +178,8 @@ while alive:
             farmLevel = 1
         elif action == "shelter":
             typeText("You build a simple shelter to stay safe from the weather.", 0.05, 0.02)
-            shelterLevel = 1
-            shelterDone = True
+            shelterUpgrade = True
+            selterDone = True
         
         if exploreDone == True:
             typeText("Now I just need to start a farm, and build shelter.", 0.05, 0.02)
@@ -172,7 +190,7 @@ while alive:
                 farmLevel = 1
             elif action == "shelter":
                 typeText("You build a simple shelter to stay safe from the weather.", 0.05, 0.02)
-                shelterLevel = 1
+                shelterUpgrade = True
                 shelterDone = True
         elif farmDone == True:
             typeText("Now I just need to explore, and build shelter.", 0.05, 0.02)
@@ -182,8 +200,8 @@ while alive:
                 exploreDone = True
             elif action == "shelter":
                 typeText("You build a simple shelter to stay safe from the weather.", 0.05, 0.02)
-                shelterLevel = 1
-                shelterDone = True
+                shelterUpgrade = True
+                ShelterDone = True
         elif shelterDone == True:
             typeText("Now I just need to explore, and build a farm.", 0.05, 0.02)
             action = input("What should I do next? (explore/farm): ").lower()
@@ -197,8 +215,8 @@ while alive:
         if exploreDone == True and farmDone == True:
             typeText("Now I just need to build shelter.", 0.05, 0.02)
             typeText("You build a simple shelter to stay safe from the weather.", 0.05, 0.02)
-            shelterLevel = 1
-            shelterDone == True
+            shelterUpgrade = True
+            shelterDone = True
         elif farmDone == True and shelterDone == True:
             typeText("Now I just need to explore.", 0.05, 0.02)
             typeText("You find a cave...... but something seems off, your hear a voice, Your are not ready yet. You decide to head home", 0.05, 0.02)
@@ -213,10 +231,6 @@ while alive:
     wakeUp = input("Time to wake up? yes/no: ")
     if wakeUp == "yes":
         typeText(f"Day {day}", 0.05, 0.02)
-        typeText(f"Your health is at {health}", 0.05, 0.02)
-        typeText(f"Your hunger is at {hunger}", 0.05, 0.02)
-        typeText(f"Your food storage is at {foodStock}", 0.05, 0.02)
-        typeText(f"Your shelter health is at {shelterHealth}", 0.05, 0.02)
     else:
         typeText("Too Bad!", 0.05, 0.02)   
     
@@ -227,4 +241,20 @@ while alive:
         typeText("Now with a farm I can start gaining food!", 0.05, 0.02)
         farmingAction()
         RandomEvents()
+        typeText("Still have some time maybe I should go back to the cave I found yesterday", 0.05, 0.02)
+        typeText("After walking into the cave you run into a wolf. The wolf pounces on you taking away 15 health from you", 0.05, 0.02)
+        health -= 15
+        typeText(f"Your health is now at {health} after the wolf attack", 0.05, 0.02)
+        typeText("Luckily he runs out of the cave.", 0.05, 0.02)
+        time.sleep(1)
+        typeText("After going deeper in the cave you find a chest. When you open the chest you find an axe, a picaxe, and a workbench", 0.05, 0.02)
+        time.sleep(1)
+        typeText("These should be usful to upgrade my farm, and my shelter, better keep that in mind", 0.05, 0.02)
+        typeText("That should be enough for today, time to hit the hay", 0.05, 0.02)
+        sleeping()
+    
+    if day == 3:
+        healthCheck()
+        hungerCheck()
+        eat()
     break
